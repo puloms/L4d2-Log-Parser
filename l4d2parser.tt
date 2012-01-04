@@ -1,0 +1,32 @@
+grammar L4d2log
+  rule startgame
+    load_map
+  end
+
+  rule load_map
+    'L ' [0-9]+ '/' [0-9]+ '/' [0-9]+ ' - ' [0-9]+ ':' [0-9]+ ':' [0-9]+ ': Loading map "' map '"' {
+      def eval(context)
+        map.eval(context)
+      end
+    }
+  end
+
+  rule map
+    [A-Za-z0-9_]+ {
+      def eval(context)
+        if /c1/.match(text_value)
+          puts 'Dead Center'
+        elsif /c2/.match(text_value)
+          puts 'Dark Carnival'
+        elsif /c3/.match(text_value)
+          puts 'Swamp Fever'
+        elsif /c4/.match(text_value)
+          puts 'Hard Rain'
+        else /c5/.match(text_value)
+          puts 'The Parish'
+        end
+      end
+    }
+  end
+
+end
