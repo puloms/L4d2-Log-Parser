@@ -1,10 +1,22 @@
 grammar L4d2log
   rule startgame
+    'L ' [0-9]+ '/' [0-9]+ '/' [0-9]+ ' - ' [0-9]+ ':' [0-9]+ ':' [0-9]+ ': ' command {
+      def eval(context)
+        command.eval(context)
+      end
+    }
+  end
+
+  rule command
     load_map
+    /
+    user_connect
+    /
+    user_character
   end
 
   rule load_map
-    'L ' [0-9]+ '/' [0-9]+ '/' [0-9]+ ' - ' [0-9]+ ':' [0-9]+ ':' [0-9]+ ': Loading map "' map '"' {
+    'Loading map "' map '"' {
       def eval(context)
         map.eval(context)
       end
@@ -25,6 +37,51 @@ grammar L4d2log
         else /c5/.match(text_value)
           puts 'The Parish'
         end
+      end
+    }
+  end
+
+  rule user_connect
+  '"' user_nick '<' [0-9]+ '><' user_steam_id '><Unassigned>" joined team "Survivor"' {
+      def eval(context)
+        user_nick.eval(context)
+        user_steam_id.eval(context)
+      end
+  }
+  end
+
+  rule user_character
+    user_nick ' spawned as a ' character {
+      def eval(context)
+        user_nick.eval(context)
+        character.eval(context)
+      end
+    }
+  end
+
+  rule user_nick
+    [A-Za-z0-9_-]+ {
+      def eval(context)
+        puts text_value
+      end
+    }
+  end
+
+
+  rule user_steam_id
+    'STEAM_' [0-9]+ ':' [0-9]+ ':' [0-9]+ {
+      def eval(context)
+        puts text_value
+      end
+    }
+  end
+
+
+
+  rule character
+    [A-Za-z]+ {
+      def eval(context)
+        puts text_value
       end
     }
   end
